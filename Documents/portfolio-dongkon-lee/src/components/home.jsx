@@ -65,7 +65,7 @@ const home = ({ setCurrPage }) => {
             </div>
             <div className="max-w-6xl mx-auto pt-10">
                 {/* Flex container to space items evenly */}
-                <div className="flex justify-center items-center space-x-12 px-20">
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8 md:space-x-12 px-4 sm:px-8 md:px-20">
                     {/* LinkedIn link with icon */}
                     <a
                         href="https://www.linkedin.com/in/dongkon-lee/"
@@ -73,8 +73,8 @@ const home = ({ setCurrPage }) => {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 hover:text-gray-600 transition-colors"
                     >
-                        <i className="bi bi-linkedin"></i>
-                        <h6>LinkedIn</h6>
+                        <i className="bi bi-linkedin text-lg sm:text-xl"></i>
+                        <h6 className="text-sm sm:text-base">LinkedIn</h6>
                     </a>
 
                     {/* GitHub link with icon */}
@@ -84,8 +84,8 @@ const home = ({ setCurrPage }) => {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 hover:text-gray-600 transition-colors"
                     >
-                        <i className="bi bi-github"></i>
-                        <h6>Github</h6>
+                        <i className="bi bi-github text-lg sm:text-xl"></i>
+                        <h6 className="text-sm sm:text-base">Github</h6>
                     </a>
 
                     {/* Email link with icon */}
@@ -93,8 +93,8 @@ const home = ({ setCurrPage }) => {
                         href="mailto:dl2635@princeton.edu"
                         className="flex items-center gap-2 hover:text-gray-600 transition-colors"
                     >
-                        <i className="bi bi-envelope"></i>
-                        <h6>Email</h6>
+                        <i className="bi bi-envelope text-lg sm:text-xl"></i>
+                        <h6 className="text-sm sm:text-base">Email</h6>
                     </a>
                 </div>
             </div>
