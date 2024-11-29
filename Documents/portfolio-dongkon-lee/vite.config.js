@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: "/",
+  base: './', // Change this to use relative paths
   plugins: [react()],
   assetsInclude: ['**/*.pdf']
 })

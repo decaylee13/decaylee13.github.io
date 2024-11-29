@@ -21,7 +21,7 @@ const home = ({ setCurrPage }) => {
                         onClick={() => setCurrPage('home')}
                         className="group text-center"
                     >
-                        <h1 className="text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft">
                             Home
                         </h1>
                     </button>
@@ -30,7 +30,7 @@ const home = ({ setCurrPage }) => {
                         onClick={() => setCurrPage('about')}
                         className="group text-center"
                     >
-                        <h1 className="text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:0.6s]">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:0.6s]">
                             About
                         </h1>
                     </button>
@@ -39,7 +39,7 @@ const home = ({ setCurrPage }) => {
                         onClick={() => setCurrPage('resume')}
                         className="group text-center"
                     >
-                        <h1 className="text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:1.2s]">
+                        <h1 className=" text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:1.2s]">
                             Resume
                         </h1>
                     </button>
@@ -48,7 +48,7 @@ const home = ({ setCurrPage }) => {
                         onClick={() => setCurrPage('academics')}
                         className="group text-center"
                     >
-                        <h1 className="text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:1.8s]">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:1.8s]">
                             Academics
                         </h1>
                     </button>
@@ -57,7 +57,7 @@ const home = ({ setCurrPage }) => {
                         onClick={() => setCurrPage('personal-work')}
                         className="group text-center"
                     >
-                        <h1 className="text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:2.4s]">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300 group-hover:text-gray-600 animate-pulse-soft [animation-delay:2.4s]">
                             Projects
                         </h1>
                     </button>

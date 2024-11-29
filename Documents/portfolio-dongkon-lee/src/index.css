@@ -6,6 +6,10 @@ body {
   @apply bg-[#E9E7E4]; 
 }
 
+.h1{
+  @apply text-4xl md:text-6xl lg:text-7xl xl:text-8xl transition-colors duration-300;
+}
+
 @layer base {
   h1 {
     @apply text-h1;
