@@ -16,10 +16,10 @@ export default {
         // Add custom sizes
         'h1': ['72px', { lineHeight: '0.2', fontWeight: '100' }],
         'h2': ['40px', { lineHeight: '1', fontWeight: '500' }],
-        'h3': ['28px'],
-        'h4': ['24px'],
-        'h5': ['20px'],
-        'h6': ['18px'],
+        'h3': ['36px', { lineHeight: '1', fontWeight: '500' }],
+        'h4': ['24px', { lineHeight: '1', fontWeight: '500' }],
+        'h5': ['20px', { lineHeight: '1', fontWeight: '500' }],
+        'h6': ['18px', { lineHeight: '1', fontWeight: '500' }],
 
       }
     },

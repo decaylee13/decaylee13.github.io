@@ -21,9 +21,11 @@ body {
   }
   h3 {
     @apply text-h3;
+    @apply font-playfair;
   }
   h4 {
     @apply text-h4;
+    @apply font-playfair;
   }
   h5 {
     @apply text-h5;

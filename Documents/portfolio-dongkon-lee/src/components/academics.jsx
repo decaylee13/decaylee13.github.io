@@ -3,12 +3,18 @@ import React, { useState } from 'react'
 const Academics = () => {
     // Create state to track visibility for each course
     const [showStates, setShowStates] = useState({
-        'ECE206': false,
-        'ECE201': false,
-        'ECE203': false,
-        'COS324': false,
-        'COS226': false,
-        'COS126': false
+        'ECE206': true,
+        'ECE201': true,
+        'ECE203': true,
+        'COS324': true,
+        'COS226': true,
+        'COS126': true,
+        'MAT201': true,
+        'MAT202': true,
+        'EGR151': true,
+        'EGR153': true,
+        'NEU201': true,
+        'NEU202': true,
     });
 
     // Function to toggle individual course dropdowns
@@ -21,9 +27,9 @@ const Academics = () => {
 
     return (
         // Main container with padding to account for fixed navbar
-        <div className="min-h-[calc(100vh-5rem)] pt-24 px-20">
+        <div className="min-h-screen pt-24 px-20">
             {/* Main content container */}
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto py-10">
                 {/* Page title */}
                 <h1 className="text-4xl font-bold text-center mb-12">
                     Academics
@@ -101,12 +107,20 @@ const Academics = () => {
                         <h3 className="text-xl font-medium text-gray-800">
                             Mathematics
                         </h3>
-                        <ul className="space-y-2 ml-6">
-                            <li className="text-lg">
-                                <span className="font-medium">MAT 202:</span> Linear Algebra with Applications
-                            </li>
-                            <li className="text-lg">
+                        <ul className="space-y-2 ml-6 list-disc">
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('MAT201')}>
                                 <span className="font-medium">MAT 201:</span> Multivariable Calculus
+                                <i className={showStates['MAT201'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['MAT201'] && (
+                                    <p className='italic mt-2'>This third-semester calculus course provides a comprehensive study of multivariable calculus, covering functions that change in two and three dimensions. Topics include vector calculus, multivariable differentiation and integration, and key theorems like Green's, Stokes', and Gauss's that generalize the Fundamental Theorem of Calculus.</p>
+                                )}
+                            </li>
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('MAT202')}>
+                                <span className="font-medium">MAT 202:</span> Linear Algebra with Applications
+                                <i className={showStates['MAT202'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['MAT202'] && (
+                                    <p className='italic mt-2'>This course develops fundamental algebraic concepts for handling multi-variable problems, starting with vectors and linear systems while emphasizing the selection of appropriate coordinate systems and bases to reveal underlying mathematical structure. The course covers key linear algebra topics including matrices, linear transformations, determinants, eigenvalues, and their applications to quadratic forms and dynamical systems.</p>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -116,12 +130,20 @@ const Academics = () => {
                         <h3 className="text-xl font-medium text-gray-800">
                             Physics
                         </h3>
-                        <ul className="space-y-2 ml-6">
-                            <li className="text-lg">
+                        <ul className="space-y-2 ml-6 list-disc">
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('EGR151')}>
                                 <span className="font-medium">EGR 151:</span> Mechanics
+                                <i className={showStates['EGR151'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['EGR151'] && (
+                                    <p className='italic mt-2'>This engineering-focused physics course covers fundamental concepts like mechanics, energy, waves, and thermodynamics through the lens of solving grand engineering challenges. The course combines theoretical physics with hands-on laboratory projects and intensive homework studios, designed specifically for engineering students to develop practical problem-solving and design skills.</p>
+                                )}
                             </li>
-                            <li className="text-lg">
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('EGR153')}>
                                 <span className="font-medium">EGR 153:</span> Electricity and Magnetism
+                                <i className={showStates['EGR153'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['EGR153'] && (
+                                    <p className='italic mt-2'>Cognitive neuroscience explores the neural foundations of human perception, cognition, and action, covering topics from vision and memory to language and decision-making in both typical and atypical development. The course combines lectures on current neuroscientific knowledge with precepts focused on developing critical analysis skills through discussion of research articles.</p>
+                                )}
                             </li>
                         </ul>
                     </div>
@@ -131,12 +153,22 @@ const Academics = () => {
                         <h3 className="text-xl font-medium text-gray-800">
                             Neuroscience
                         </h3>
-                        <ul className="space-y-2 ml-6">
-                            <li className="text-lg">
+                        <ul className="space-y-2 ml-6 list-disc">
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('NEU201')}>
                                 <span className="font-medium">NEU 201:</span> Fundamentals of Neuroscience
+                                <i className={showStates['NEU201'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['NEU201'] && (
+                                    <p className='italic mt-2'>This intensive neuroscience course examines how the brain processes information across multiple scales, from individual neurons to complex neural circuits that underlie perception, action, emotion, and memory. The course explores fundamental questions about how the brain receives, processes, and acts on information, covering topics from neuronal excitability and synaptic physiology to the neural pathways that construct our internal model of reality and guide behavior.</p>
+                                )}
                             </li>
-                            <li className="text-lg">
+                            <li className="text-lg cursor-pointer" onClick={() => toggleDropDown('NEU202')}>
                                 <span className="font-medium">NEU 202:</span> Advanced Neuroscience
+                                <i className={showStates['NEU202'] ? "bi bi-caret-down-fill ml-2" : "bi bi-caret-right-fill ml-2"}></i>
+                                {showStates['NEU202'] && (
+                                    <p className='italic mt-2'>This physics course explores light, electricity, and magnetism as foundational principles for modern engineering applications in bioengineering, computation, data transmission, and energy systems, including an introduction to quantum mechanics. The course combines theoretical study with hands-on laboratory work where students test and design their own applications of these principles.
+
+                                    </p>
+                                )}
                             </li>
                         </ul>
                     </div>
