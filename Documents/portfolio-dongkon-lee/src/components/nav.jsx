@@ -1,4 +1,4 @@
-import { useState } from 'react' // We'll need this for the mobile menu toggle
+import { useState } from 'react'
 
 const Nav = ({ setCurrPage, currPage }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
