@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 const BrainNavigation = ({ onNavigate }) => {
     const [activeSection, setActiveSection] = useState(null);
     const [activeSectionContent, setActiveSectionContent] = useState(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
     const sections = [
         {
@@ -90,35 +91,101 @@ const BrainNavigation = ({ onNavigate }) => {
         }
     };
 
+    const handleMouseMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePosition({
+            x: (e.clientX - rect.left) / rect.width,
+            y: (e.clientY - rect.top) / rect.height
+        });
+    };
+
     return (
-        <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
-            {/* Animated background elements */}
+        <div className="w-full h-screen bg-gradient-to-br from-amber-50 via-stone-100 to-amber-50 flex flex-col items-center justify-center relative overflow-hidden" onMouseMove={handleMouseMove}>
+            {/* Geometric Background */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-                <div className="absolute top-3/4 right-1/4 w-64 h-64 bg-sky-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse" style={{ animationDelay: '4s' }}></div>
+                {/* Mouse tracking effects only */}
+                <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    {/* Floating circles that follow mouse */}
+                    {Array.from({ length: 20 }).map((_, i) => {
+                        const angle = (i / 20) * Math.PI * 2;
+                        const radius = 100 + Math.sin(Date.now() / 1000 + i) * 20;
+                        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
+                        const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 1080;
+                        const x = mousePosition.x * screenWidth + Math.cos(angle) * radius;
+                        const y = mousePosition.y * screenHeight + Math.sin(angle) * radius;
+
+                        return (
+                            <circle
+                                key={`circle-${i}`}
+                                cx={x}
+                                cy={y}
+                                r={3 + Math.sin(Date.now() / 500 + i) * 2}
+                                fill="#a8a29e"
+                                opacity={0.2 + Math.sin(Date.now() / 800 + i) * 0.1}
+                                style={{
+                                    transition: 'all 0.8s ease-out'
+                                }}
+                            />
+                        );
+                    })}
+
+                    {/* Ripple effect from mouse position */}
+                    <circle
+                        cx={mousePosition.x * 100 + '%'}
+                        cy={mousePosition.y * 100 + '%'}
+                        r="150"
+                        fill="none"
+                        stroke="#78716c"
+                        strokeWidth="1"
+                        opacity="0.2"
+                        style={{
+                            transition: 'all 0.3s ease-out'
+                        }}
+                    >
+                        <animate attributeName="r" values="50;200;50" dur="4s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.3;0;0.3" dur="4s" repeatCount="indefinite" />
+                    </circle>
+
+                    <circle
+                        cx={mousePosition.x * 100 + '%'}
+                        cy={mousePosition.y * 100 + '%'}
+                        r="100"
+                        fill="none"
+                        stroke="#a8a29e"
+                        strokeWidth="0.5"
+                        opacity="0.3"
+                        style={{
+                            transition: 'all 0.3s ease-out'
+                        }}
+                    >
+                        <animate attributeName="r" values="20;120;20" dur="3s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite" />
+                    </circle>
+                </svg>
             </div>
 
             {/* Neural network background */}
-            <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="neural-grid" width="100" height="100" patternUnits="userSpaceOnUse">
-                        <circle cx="50" cy="50" r="2" fill="#fff" opacity="0.3">
-                            <animate attributeName="opacity" values="0.1;0.5;0.1" dur="3s" repeatCount="indefinite" />
-                        </circle>
-                        <line x1="50" y1="50" x2="100" y2="0" stroke="#fff" strokeWidth="0.5" opacity="0.2" />
-                        <line x1="50" y1="50" x2="100" y2="100" stroke="#fff" strokeWidth="0.5" opacity="0.2" />
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#neural-grid)" />
-            </svg>
+            <div className="absolute inset-0 overflow-hidden opacity-5">
+                <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="neural-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <circle cx="50" cy="50" r="1" fill="#000" opacity="0.3">
+                                <animate attributeName="opacity" values="0.1;0.4;0.1" dur="5s" repeatCount="indefinite" />
+                            </circle>
+                            <line x1="50" y1="50" x2="100" y2="0" stroke="#000" strokeWidth="0.3" opacity="0.1" />
+                            <line x1="50" y1="50" x2="100" y2="100" stroke="#000" strokeWidth="0.3" opacity="0.1" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#neural-grid)" />
+                </svg>
+            </div>
 
             {/* Title */}
             <div className="absolute top-8 z-30 text-center">
-                <h1 className="text-4xl md:text-6xl text-white font-serif tracking-wider drop-shadow-2xl">
+                <h1 className="text-4xl md:text-6xl text-gray-800 font-serif drop-shadow-lg">
                     Dongkon Lee
                 </h1>
-                <p className="text-xl text-blue-200 font-light mt-2 tracking-wide">
+                <p className="text-xl text-gray-600 font-light mt-2 tracking-wide">
                     Digital Portfolio
                 </p>
             </div>
@@ -137,9 +204,9 @@ const BrainNavigation = ({ onNavigate }) => {
 
                         {/* Brain tissue gradient */}
                         <radialGradient id="brain-gradient" cx="40%" cy="30%" r="80%">
-                            <stop offset="0%" style={{ stopColor: '#f8fafc', stopOpacity: 0.9 }} />
-                            <stop offset="50%" style={{ stopColor: '#e2e8f0', stopOpacity: 0.7 }} />
-                            <stop offset="100%" style={{ stopColor: '#cbd5e1', stopOpacity: 0.5 }} />
+                            <stop offset="0%" style={{ stopColor: '#f5f5f4', stopOpacity: 0.9 }} />
+                            <stop offset="50%" style={{ stopColor: '#e7e5e4', stopOpacity: 0.7 }} />
+                            <stop offset="100%" style={{ stopColor: '#d6d3d1', stopOpacity: 0.5 }} />
                         </radialGradient>
 
                         {/* Glow filter */}
@@ -164,13 +231,13 @@ const BrainNavigation = ({ onNavigate }) => {
                     {/* Main brain outline with more realistic shape */}
                     <path d="M200,180 C150,160 120,200 130,250 C120,300 110,350 120,400 C130,450 150,490 180,520 C220,550 270,565 320,560 C360,555 380,560 420,580 C460,590 500,585 540,580 C580,570 610,550 640,530 C670,500 680,470 690,520 C720,490 735,450 730,410 C740,450 750,490 745,530 C740,570 725,605 700,630 C670,655 630,665 590,660 C550,655 535,665 500,665 C465,655 435,635 405,615 C385,585 380,560 380,560 C350,440 280,440 240,420 C220,410 210,395 200,380 C250,420 320,430 380,420 C420,410 450,390 470,360 C490,320 520,290 560,280 C600,270 640,280 670,300 C700,330 720,370 730,410 C720,370 700,330 670,300 C640,280 600,270 560,280 C520,290 490,320 470,360 C450,390 420,410 380,420 C320,430 250,420 200,380 C160,350 140,300 130,250 C140,300 160,350 200,380 Z"
                         fill="url(#brain-gradient)"
-                        stroke="#94a3b8"
+                        stroke="#78716c"
                         strokeWidth="2"
                         className="transition-all duration-300"
                     />
 
                     {/* Brain fissures and sulci - more realistic */}
-                    <g className="opacity-30" stroke="#64748b" strokeWidth="1.5" fill="none">
+                    <g className="opacity-40" stroke="#57534e" strokeWidth="1.5" fill="none">
                         {/* Central sulcus */}
                         <path d="M400,200 C420,250 440,300 460,350 C470,380 475,410 480,440" />
 
@@ -212,8 +279,8 @@ const BrainNavigation = ({ onNavigate }) => {
 
                             <path
                                 d={regionPaths[section.position].path}
-                                fill={activeSection === section.id ? `url(#gradient-${section.id})` : 'rgba(255,255,255,0.1)'}
-                                stroke={activeSection === section.id ? section.color : '#94a3b8'}
+                                fill={activeSection === section.id ? `url(#gradient-${section.id})` : 'rgba(120,113,108,0.1)'}
+                                stroke={activeSection === section.id ? section.color : '#78716c'}
                                 strokeWidth={activeSection === section.id ? "3" : "1"}
                                 filter={activeSection === section.id ? "url(#glow)" : "none"}
                                 className={`transition-all duration-500 ease-in-out cursor-pointer 
@@ -230,7 +297,7 @@ const BrainNavigation = ({ onNavigate }) => {
                                 textAnchor="middle"
                                 className={`pointer-events-none transition-all duration-300 font-sans select-none
                                     ${activeSection === section.id ? 'font-bold' : 'font-medium'}`}
-                                fill={activeSection === section.id ? '#ffffff' : '#e2e8f0'}
+                                fill={activeSection === section.id ? '#000000' : '#44403c'}
                                 fontSize={activeSection === section.id ? "20" : "16"}
                                 filter={activeSection === section.id ? "url(#glow)" : "none"}
                             >
@@ -240,7 +307,7 @@ const BrainNavigation = ({ onNavigate }) => {
                     ))}
 
                     {/* Neural connections - animated */}
-                    <g className="opacity-20" stroke="#60a5fa" strokeWidth="1" fill="none">
+                    <g className="opacity-20" stroke="#78716c" strokeWidth="1" fill="none">
                         <path d="M320,280 Q400,250 480,300">
                             <animate attributeName="stroke-opacity" values="0.1;0.4;0.1" dur="4s" repeatCount="indefinite" />
                         </path>
@@ -258,20 +325,20 @@ const BrainNavigation = ({ onNavigate }) => {
             </div>
 
             {/* Enhanced description box */}
-            <div className={`absolute bottom-20 bg-black/80 backdrop-blur-lg rounded-xl shadow-2xl p-6 max-w-lg mx-auto border border-blue-500/30 transform transition-all duration-500 ease-in-out
+            <div className={`absolute bottom-20 bg-white/90 backdrop-blur-lg rounded-xl shadow-2xl p-6 max-w-lg mx-auto border border-stone-300 transform transition-all duration-500 ease-in-out
                 ${activeSectionContent ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95 pointer-events-none'}`}>
-                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-black/80 border-l border-t border-blue-500/30 rotate-45"></div>
-                <p className="text-white font-light text-center leading-relaxed">
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white/90 border-l border-t border-stone-300 rotate-45"></div>
+                <p className="text-gray-800 font-light text-center leading-relaxed">
                     {activeSectionContent}
                 </p>
             </div>
 
             {/* Interactive instruction */}
-            <div className="absolute bottom-6 text-blue-200 font-light text-sm text-center px-4">
+            <div className="absolute bottom-6 text-gray-600 font-light text-sm text-center px-4">
                 <div className="flex items-center justify-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
                     <span>Hover over brain regions to explore • Click to navigate</span>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
                 </div>
             </div>
         </div>
