@@ -3,25 +3,148 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dongkon's Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quattrocento+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Martel:wght@200;300;400;600;700;800;900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quattrocento+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-    rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dongkon's Portfolio</title>
-  <script type="module" crossorigin src="./assets/index-g33N40qv.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-bHMCxkee.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <div id="root"></div>
+  <header class="nav">
+    <div class="brand">
+      <div class="brand__mark"></div>
+      <span class="brand__name">Dongkon Lee</span>
+    </div>
+    <nav class="nav__links">
+      <a href="#home">Home</a>
+      <a href="#resume">Resume</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#academics">Academics</a>
+    </nav>
+    <a class="nav__cta" href="mailto:dongkon7@gmail.com">Let’s talk</a>
+  </header>
 
+  <main>
+    <section id="home" class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Creative developer & designer</p>
+        <h1>Exploring the mind through code.</h1>
+        <p class="lede">Interactive experiences, thoughtful interfaces, and human-first engineering. Tap a region of the
+          brain to dive into my work.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#projects">See projects</a>
+          <a class="btn" href="Resume.pdf" target="_blank" rel="noopener">Download resume</a>
+        </div>
+        <div class="legend">
+          <div class="legend__item" data-section="home"><span class="swatch"></span>Home</div>
+          <div class="legend__item" data-section="resume"><span class="swatch"></span>Resume</div>
+          <div class="legend__item" data-section="about"><span class="swatch"></span>About</div>
+          <div class="legend__item" data-section="projects"><span class="swatch"></span>Projects</div>
+          <div class="legend__item" data-section="academics"><span class="swatch"></span>Academics</div>
+        </div>
+      </div>
+      <div class="hero__canvas">
+        <canvas id="brain-canvas"></canvas>
+        <div class="info-card" id="info-card">
+          <p class="info-card__label">Active</p>
+          <h3 class="info-card__title">Home</h3>
+          <p class="info-card__body">Welcome to the portfolio. Move around the brain and tap any lobe to jump into a
+            section.</p>
+          <a class="info-card__link" href="#home">Go to Home</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="panel panel--split">
+      <div class="panel__media">
+        <div class="portrait">
+          <img src="profile.jpg" alt="Portrait of Dongkon Lee">
+        </div>
+      </div>
+      <div class="panel__content">
+        <p class="eyebrow">About</p>
+        <h2>Human-centered engineering</h2>
+        <p>I'm a developer who thrives where design meets technology. I build delightful experiences with thoughtful
+          motion, creative visuals, and accessibility in mind.</p>
+        <div class="pill-row">
+          <span class="pill">React & Three.js</span>
+          <span class="pill">Data visualization</span>
+          <span class="pill">Systems design</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="resume" class="panel">
+      <div class="panel__content">
+        <p class="eyebrow">Resume</p>
+        <h2>Experience & impact</h2>
+        <p>From product engineering to interactive storytelling, I translate complex ideas into approachable, elegant
+          interfaces.</p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="Resume.pdf" target="_blank" rel="noopener">View full resume</a>
+          <a class="btn" href="mailto:dongkon7@gmail.com">Schedule a chat</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="grid">
+      <div class="grid__header">
+        <p class="eyebrow">Projects</p>
+        <h2>Featured builds</h2>
+        <p class="lede">A mix of web applications, interactive demos, and experiments that push visuals forward.</p>
+      </div>
+      <div class="grid__items">
+        <article class="card" data-section="projects">
+          <p class="card__eyebrow">Visualization</p>
+          <h3>Neural Pathways</h3>
+          <p>Three.js exploration of neural data with intuitive controls and cinematic lighting.</p>
+        </article>
+        <article class="card" data-section="projects">
+          <p class="card__eyebrow">Product</p>
+          <h3>Workflow Studio</h3>
+          <p>Collaborative dashboard that simplifies complex processes with clean, responsive UI.</p>
+        </article>
+        <article class="card" data-section="projects">
+          <p class="card__eyebrow">Experiment</p>
+          <h3>Anatomy View</h3>
+          <p>Immersive anatomy reference featuring segmented models and contextual highlights.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="academics" class="panel">
+      <div class="panel__content">
+        <p class="eyebrow">Academics</p>
+        <h2>Lifelong learner</h2>
+        <p>Research-driven mindset with a passion for cognitive science, visualization, and making complex topics
+          approachable.</p>
+        <div class="pill-row">
+          <span class="pill">Cognitive science</span>
+          <span class="pill">Visualization research</span>
+          <span class="pill">Interactive systems</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="brand">
+      <div class="brand__mark"></div>
+      <span class="brand__name">Dongkon Lee</span>
+    </div>
+    <div class="footer__links">
+      <a href="mailto:dongkon7@gmail.com">Email</a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+  <script type="module" src="main.js"></script>
 </body>
 
 </html>
