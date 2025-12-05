@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './', // Use relative paths for assets
   build: {
-    outDir: 'docs', // Output build to /docs for GitHub Pages
+    outDir: 'dist', // Output build to /dist for gh-pages
   },
   plugins: [react()],
   assetsInclude: ['**/*.pdf']
