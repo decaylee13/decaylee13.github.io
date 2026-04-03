@@ -1,73 +1,65 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import BrainViewer from './BrainViewer'
+import DetailPage from './DetailPage'
 import './App.css'
 
 const CATEGORIES = {
-  research: {
-    title: 'Research',
-    tagline: 'Curiosity-driven exploration',
-    description:
-      'Academic work, papers, and technical investigations at the intersection of neuroscience, machine learning, and data.',
-    items: ['Paper 01', 'Paper 02', 'Paper 03'],
-    color: '#6366f1',
-  },
-  art: {
-    title: 'Art',
-    tagline: 'Visual expression',
-    description:
-      'Digital art, illustration, and generative works exploring form, abstraction, and the human condition.',
-    items: ['Series 01', 'Series 02', 'Series 03'],
-    color: '#ec4899',
-  },
-  music: {
-    title: 'Music',
-    tagline: 'Sound & rhythm',
-    description:
-      'Original compositions, productions, and sonic experiments across genres and moods.',
-    items: ['Track 01', 'Track 02', 'Track 03'],
-    color: '#10b981',
-  },
-  experience: {
-    title: 'Experience',
-    tagline: 'Where I\'ve been',
-    description:
-      'Professional history, roles, and milestones that have shaped my perspective and craft.',
-    items: ['Role 01', 'Role 02', 'Role 03'],
-    color: '#f59e0b',
-  },
-  projects: {
-    title: 'Projects',
-    tagline: 'Built from scratch',
-    description:
-      'Software projects, tools, and engineering work — from proof-of-concepts to production systems.',
-    items: ['Project 01', 'Project 02', 'Project 03'],
-    color: '#8b5cf6',
-  },
-  photos: {
-    title: 'Photos',
-    tagline: 'Moments captured',
-    description:
-      'Photography and image collections documenting places, people, and the quiet beauty of everyday life.',
-    items: ['Album 01', 'Album 02', 'Album 03'],
-    color: '#06b6d4',
-  },
+  research:   { title: 'Research',   color: '#6366f1' },
+  art:        { title: 'Art',        color: '#ec4899' },
+  music:      { title: 'Music',      color: '#10b981' },
+  experience: { title: 'Experience', color: '#f59e0b' },
+  projects:   { title: 'Projects',   color: '#8b5cf6' },
+  photos:     { title: 'Photos',     color: '#06b6d4' },
 }
 
 export default function App() {
-  const [progress,  setProgress]  = useState(0)
-  const [ready,     setReady]     = useState(false)
-  const [hoverData, setHoverData] = useState(null)
+  const [progress,    setProgress]    = useState(0)
+  const [ready,       setReady]       = useState(false)
+  const [hoverData,   setHoverData]   = useState(null)
+  const [activePage,  setActivePage]  = useState(null)  // category data while on detail view
+  const [pageVisible, setPageVisible] = useState(false) // drives CSS fade-in
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  const cat = hoverData ? CATEGORIES[hoverData.key] : null
+  const brainRef = useRef()
+
+  // Called by BrainViewer once zoom-in animation completes
+  const handleEnterSection = useCallback((data) => {
+    setActivePage(data)
+    setIsTransitioning(false)
+    // Tiny rAF delay so React renders the page node before we trigger the fade-in
+    requestAnimationFrame(() => setPageVisible(true))
+  }, [])
+
+  // Called by back button
+  const handleBack = useCallback(() => {
+    setPageVisible(false)          // fade out page
+    setIsTransitioning(true)
+    setTimeout(() => {
+      brainRef.current?.zoomOut()  // start zoom-out after page fades
+    }, 320)
+  }, [])
+
+  // Called by BrainViewer once zoom-out animation completes
+  const handleExitSection = useCallback(() => {
+    setActivePage(null)
+    setIsTransitioning(false)
+    setHoverData(null)
+  }, [])
+
+  const onDetailPage = activePage !== null
 
   return (
     <div className="page">
-      {/* ── Full-screen 3-D viewer ── */}
+      {/* ── Full-screen 3-D viewer (always mounted) ── */}
       <div className="viewer-wrap">
         <BrainViewer
+          ref={brainRef}
           onProgress={setProgress}
           onReady={() => setReady(true)}
           onHover={setHoverData}
+          onEnterSection={handleEnterSection}
+          onExitSection={handleExitSection}
+          interactive={!onDetailPage && !isTransitioning}
         />
 
         {!ready && (
@@ -80,38 +72,28 @@ export default function App() {
         )}
       </div>
 
-      {/* ── Hero text (top-left) ── */}
-      <header className="hero-text" style={{ opacity: hoverData ? 0 : 1 }}>
-        <p className="eyebrow">Portfolio</p>
-        <h1>Hover a region<br />to explore</h1>
-        <p className="sub">Each section of the brain maps<br />to a chapter of my work.</p>
+      {/* ── Hero text ── */}
+      <header className="hero-text" style={{ opacity: (onDetailPage || isTransitioning) ? 0 : 1 }}>
+        <p className="eyebrow">Dongkon (DK) Lee</p>
+        <h1>Explore<br />DK's mind.</h1>
+        <p className="sub">Each region of the brain maps<br />to a chapter of his world.</p>
       </header>
 
-      {/* ── Side panel ── */}
-      <aside className={`side-panel ${cat ? 'side-panel--open' : ''}`}>
-        {cat && (
+      {/* ── Side-panel on hover (hidden on detail page) ── */}
+      <aside
+        className={`side-panel ${hoverData && !onDetailPage && !isTransitioning ? 'side-panel--open' : ''}`}
+      >
+        {hoverData && (
           <>
-            <div className="panel-accent" style={{ background: cat.color }} />
-            <p className="panel-tagline">{cat.tagline}</p>
-            <h2 className="panel-title">{cat.title}</h2>
-            <p className="panel-desc">{cat.description}</p>
-            <ul className="panel-items">
-              {cat.items.map((item) => (
-                <li key={item}>
-                  <span className="panel-item-dot" style={{ background: cat.color }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <a className="panel-cta" style={{ color: cat.color }}>
-              View all →
-            </a>
+            <div className="panel-accent" style={{ background: hoverData.color }} />
+            <p className="panel-tagline">Click to explore</p>
+            <h2 className="panel-title">{hoverData.category}</h2>
           </>
         )}
       </aside>
 
-      {/* ── Bottom section legend ── */}
-      <footer className={`legend ${hoverData ? 'legend--hidden' : ''}`}>
+      {/* ── Legend ── */}
+      <footer className={`legend ${(hoverData || onDetailPage || isTransitioning) ? 'legend--hidden' : ''}`}>
         {Object.entries(CATEGORIES).map(([key, { title, color }]) => (
           <div key={key} className="legend-item">
             <span className="legend-dot" style={{ background: color }} />
@@ -119,6 +101,15 @@ export default function App() {
           </div>
         ))}
       </footer>
+
+      {/* ── Detail page overlay (mounted while activePage is set) ── */}
+      {activePage && (
+        <DetailPage
+          data={activePage}
+          visible={pageVisible}
+          onBack={handleBack}
+        />
+      )}
     </div>
   )
 }
