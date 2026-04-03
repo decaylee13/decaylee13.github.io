@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Adult Brain - Three.js Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; overflow: hidden; font-family: monospace; color: #ccc; }
+    canvas { display: block; }
+    #info {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      pointer-events: none;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">Loading model…</div>
+  <div id="info">
+    Adult Brain<br>
+    <span style="color:#666">Drag to rotate · Scroll to zoom · Right-drag to pan</span>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
+    // ── Scene ────────────────────────────────────────────────────────────────
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a0f);
+    scene.fog = new THREE.Fog(0x0a0a0f, 200, 600);
+
+    // ── Camera ───────────────────────────────────────────────────────────────
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 2000);
+    camera.position.set(0, 60, 200);
+
+    // ── Renderer ─────────────────────────────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+
+    // ── Controls ─────────────────────────────────────────────────────────────
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 20;
+    controls.maxDistance = 800;
+
+    // ── Lights ───────────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+    const key = new THREE.DirectionalLight(0xfff4e0, 2.5);
+    key.position.set(80, 120, 100);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    const sc = key.shadow.camera;
+    sc.near = 1; sc.far = 500;
+    sc.left = sc.bottom = -150; sc.right = sc.top = 150;
+    scene.add(key);
+
+    scene.add(Object.assign(new THREE.DirectionalLight(0xc8d8ff, 0.8), { position: new THREE.Vector3(-80, 40, -60) }));
+    scene.add(Object.assign(new THREE.DirectionalLight(0xffe0c0, 1.0), { position: new THREE.Vector3(0, -80, -120) }));
+
+    // ── Texture helpers ───────────────────────────────────────────────────────
+    const texLoader = new THREE.TextureLoader();
+    const T = 'textures/';
+
+    function tex(path, srgb = false) {
+      const t = texLoader.load(path);
+      t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.LinearSRGBColorSpace;
+      return t;
+    }
+
+    // ── Material definitions (matched to actual filenames) ────────────────────
+    // Naming conventions in this asset pack are inconsistent, so we map explicitly.
+    const PARTS = {
+      // Left hemisphere — uses single-letter suffixes (B=BaseColor, N=Normal, R=Roughness, M=Metallic)
+      left_hemisphere: {
+        match: (name) => /left_hemisphere/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:          tex(`${T}Brain_brain_stem_Brain_left_hemisphere_M_B.png`, true),
+          normalMap:    tex(`${T}Brain_brain_stem_Brain_left_hemisphere_M_N.png`),
+          roughnessMap: tex(`${T}Brain_brain_stem_Brain_left_hemisphere_M_R.png`),
+          metalnessMap: tex(`${T}Brain_brain_stem_Brain_left_hemisphere_M_M.png`),
+          roughness: 1, metalness: 1,
+        }),
+      },
+      // Right hemisphere — only one texture file present (treat as BaseColor)
+      right_hemisphere: {
+        match: (name) => /right_hemisphere/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:      tex(`${T}Brain_brain_stem_Brain_right_hemisphere_M_.png`, true),
+          roughness: 0.75, metalness: 0.0,
+        }),
+      },
+      // Brain stem — full names
+      brain_stem: {
+        match: (name) => /brain_stem|brainstem/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:          tex(`${T}Brain_brain_stem_Brain_stem_M_BaseColor.png`, true),
+          normalMap:    tex(`${T}Brain_brain_stem_Brain_stem_M_Normal.png`),
+          roughnessMap: tex(`${T}Brain_brain_stem_Brain_stem_M_Roughness.png`),
+          metalnessMap: tex(`${T}Brain_brain_stem_Brain_stem_M_Metallic.png`),
+          roughness: 1, metalness: 1,
+        }),
+      },
+      // Cerebellum — full names
+      cerebellum: {
+        match: (name) => /cerebellum/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:          tex(`${T}Brain_brain_stem_Cerebellum_M_BaseColor.png`, true),
+          normalMap:    tex(`${T}Brain_brain_stem_Cerebellum_M_Normal.png`),
+          roughnessMap: tex(`${T}Brain_brain_stem_Cerebellum_M_Roughness.png`),
+          metalnessMap: tex(`${T}Brain_brain_stem_Cerebellum_M_Metallic.png`),
+          roughness: 1, metalness: 1,
+        }),
+      },
+      // Olfactory nerve — truncated filenames
+      olfactory: {
+        match: (name) => /olfactory/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:          tex(`${T}Brain_brain_stem_Olfactory_nerve_M_BaseCol.png`, true),
+          normalMap:    tex(`${T}Brain_brain_stem_Olfactory_nerve_M_Normal.png`),
+          roughnessMap: tex(`${T}Brain_brain_stem_Olfactory_nerve_M_Roughne.png`),
+          metalnessMap: tex(`${T}Brain_brain_stem_Olfactory_nerve_M_Metalli.png`),
+          roughness: 1, metalness: 1,
+        }),
+      },
+      // Stria medullaris — truncated filenames
+      stria: {
+        match: (name) => /stria/i.test(name),
+        build: () => new THREE.MeshStandardMaterial({
+          map:          tex(`${T}Brain_brain_stem_Stria_medullari_M_BaseCol.png`, true),
+          normalMap:    tex(`${T}Brain_brain_stem_Stria_medullari_M_Normal.png`),
+          roughnessMap: tex(`${T}Brain_brain_stem_Stria_medullari_M_Roughne.png`),
+          metalnessMap: tex(`${T}Brain_brain_stem_Stria_medullari_M_Metalli.png`),
+          roughness: 1, metalness: 1,
+        }),
+      },
+    };
+
+    // Cache built materials (lazy, one per part)
+    const matCache = {};
+    function getMaterial(meshName) {
+      for (const [key, def] of Object.entries(PARTS)) {
+        if (def.match(meshName)) {
+          if (!matCache[key]) matCache[key] = def.build();
+          return matCache[key];
+        }
+      }
+      return null; // use embedded material as fallback
+    }
+
+    // ── FBX Loader ────────────────────────────────────────────────────────────
+    const loader = new FBXLoader();
+    loader.load(
+      'source/Brain_brain_stem.fbx',
+      (fbx) => {
+        // Center
+        const box = new THREE.Box3().setFromObject(fbx);
+        const center = box.getCenter(new THREE.Vector3());
+        fbx.position.sub(center);
+
+        // Scale to ~100 units
+        const size = box.getSize(new THREE.Vector3()).length();
+        const scale = 100 / size;
+        fbx.scale.setScalar(scale);
+
+        // Apply materials & shadows
+        fbx.traverse((child) => {
+          if (!child.isMesh) return;
+          child.castShadow = true;
+          child.receiveShadow = true;
+
+          const mat = getMaterial(child.name);
+          if (mat) {
+            child.material = mat;
+          } else {
+            // Upgrade embedded material to MeshStandardMaterial for PBR lighting
+            const old = Array.isArray(child.material) ? child.material[0] : child.material;
+            child.material = new THREE.MeshStandardMaterial({
+              color: old?.color ?? new THREE.Color(0xddbbaa),
+              map: old?.map ?? null,
+              roughness: 0.7,
+              metalness: 0.05,
+            });
+          }
+        });
+
+        scene.add(fbx);
+
+        // Fit camera to scaled object
+        const newBox = new THREE.Box3().setFromObject(fbx);
+        const newSize = newBox.getSize(new THREE.Vector3()).length();
+        camera.position.set(0, newSize * 0.4, newSize * 1.3);
+        controls.target.set(0, 0, 0);
+        controls.minDistance = newSize * 0.2;
+        controls.maxDistance = newSize * 5;
+        controls.update();
+
+        document.getElementById('loading').style.display = 'none';
+      },
+      (xhr) => {
+        if (xhr.total) {
+          const pct = Math.round((xhr.loaded / xhr.total) * 100);
+          document.getElementById('loading').textContent = `Loading model… ${pct}%`;
+        }
+      },
+      (err) => {
+        console.error('FBX load error:', err);
+        document.getElementById('loading').innerHTML =
+          `<span style="color:#f66">Error loading model</span><br><small>${err.message ?? err}</small>`;
+      }
+    );
+
+    // ── Resize ────────────────────────────────────────────────────────────────
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    // ── Render loop ───────────────────────────────────────────────────────────
+    (function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+  </script>
+</body>
+</html>
